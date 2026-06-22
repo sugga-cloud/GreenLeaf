@@ -1,0 +1,22 @@
+# Environment
+.env
+
+# Database
+sqlite/database.sqlite
+
+# Logs
+logs/*.log
+
+# Dev artifacts
+cookies.txt
+*.tmp
+test_*.php
+test resume.pdf
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store

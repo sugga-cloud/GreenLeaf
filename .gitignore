@@ -3,6 +3,7 @@
 
 # Database
 sqlite/database.sqlite
+backups/
 
 # Logs
 logs/*.log

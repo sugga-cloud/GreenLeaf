@@ -1,0 +1,155 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: sqlite3, zip
+
+      - name: Lint PHP files
+        run: |
+          failed=0
+          while IFS= read -r -d '' f; do
+            php -l "$f" || failed=1
+          done < <(find . -name '*.php' -not -path './.github/*' -print0)
+          exit $failed
+
+      - name: Security scan - debug code
+        run: |
+          bad=$(grep -rn 'var_dump\|print_r\|phpinfo\|debug_backtrace\|xdebug_break' \
+            --include='*.php' . \
+            --exclude-dir=vendor --exclude-dir=.github 2>/dev/null || true)
+          if [ -n "$bad" ]; then
+            echo "Found debug calls:"
+            echo "$bad"
+            exit 1
+          fi
+
+      - name: Security scan - hardcoded secrets
+        run: |
+          bad=$(grep -rn 'gsk_\|sk-[A-Za-z0-9]\|ghp_\|gho_\|ghu_\|ghs_\|ghr_' \
+            --include='*.php' --include='*.js' . \
+            --exclude-dir=vendor --exclude-dir=.github 2>/dev/null || true)
+          if [ -n "$bad" ]; then
+            echo "Possible hardcoded secrets found:"
+            echo "$bad"
+            exit 1
+          fi
+
+      - name: Security scan - DEBUG flag
+        run: |
+          if grep -q 'DEBUG=true' .env 2>/dev/null; then
+            echo "WARNING: .env has DEBUG=true — not suitable for production"
+          fi
+          # also check for DEBUG=true hardcoded in PHP files
+          bad=$(grep -rn "define.*DEBUG.*true\|DEBUG.*=.*true" --include='*.php' . \
+            --exclude-dir=vendor --exclude-dir=.github 2>/dev/null || true)
+          if [ -n "$bad" ]; then
+            echo "DEBUG=true found in PHP files (should be false in production):"
+            echo "$bad"
+          fi
+
+      - name: Check DB schema
+        run: |
+          cp .env.example .env 2>/dev/null || echo "GROQ_API_KEY=test" > .env
+          mkdir -p sqlite logs
+          php models/schema.php
+          echo "DB initialized OK"
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: sqlite3, zip
+
+      - name: Inject .env from secrets
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+
+      - name: Backup database on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            backup_dir="${{ secrets.DEPLOY_PATH }}/backups"
+            mkdir -p "$backup_dir"
+            ts=$(date +%Y-%m-%d_%H-%M-%S)
+            if [ -f "${{ secrets.DEPLOY_PATH }}/sqlite/database.sqlite" ]; then
+              cp "${{ secrets.DEPLOY_PATH }}/sqlite/database.sqlite" "$backup_dir/db_$ts.sqlite"
+              gzip "$backup_dir/db_$ts.sqlite"
+              # keep last 30 backups, remove older
+              ls -t "$backup_dir"/db_*.sqlite.gz | tail -n +31 | xargs -r rm
+              echo "DB backed up: db_$ts.sqlite.gz"
+            else
+              echo "No existing DB to back up"
+            fi
+
+      - name: Deploy to production server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: |
+            .
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 0
+          rm: false
+          exclude: |
+            .git/**
+            .github/**
+            .gitignore
+            .env
+            .env.example
+            sqlite/database.sqlite
+            logs/*.log
+            backups/**
+            test_*.php
+            *.tmp
+
+      - name: Run DB migrations
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            php models/schema.php
+            echo "Migrations complete"
+
+      - name: Set correct permissions
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            chmod -R 755 .
+            chmod -R 777 sqlite logs
+            echo "Permissions set"

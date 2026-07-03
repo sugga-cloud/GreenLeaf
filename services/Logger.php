@@ -12,7 +12,7 @@ function _log_emit($level, $tag, $message, $data = null) {
     if ($data !== null) {
         if (is_array($data) || is_object($data)) {
             $json = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            $json = $json ?: print_r($data, true);
+            $json = $json ?: var_export($data, true);
             if (strlen($json) > 2000) $json = substr($json, 0, 2000) . '...[truncated]';
             $line .= " | data=" . $json;
         } else {

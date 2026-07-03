@@ -233,7 +233,7 @@ $smtp_encryption = $db->query("SELECT value FROM settings WHERE key = 'smtp_encr
                   <label class="font-label-md text-on-surface-variant font-bold text-xs">Groq API Key</label>
                   <div class="relative">
                       <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">key</span>
-                      <input type="password" name="groq_key" placeholder="gsk_..." value="<?= htmlspecialchars($current_groq) ?>" class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all text-sm">
+                      <input type="password" name="groq_key" placeholder="Enter your API key" value="<?= htmlspecialchars($current_groq) ?>" class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all text-sm">
                   </div>
                   <p class="font-label-sm text-outline mt-1 text-[10px] font-semibold">Used for dynamic resume generations, custom AI optimizations, and phrasings.</p>
               </div>

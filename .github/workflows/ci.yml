@@ -81,6 +81,9 @@ jobs:
       - name: Inject .env from secrets
         run: |
           echo "${{ secrets.ENV_FILE }}" > .env
+          mkdir -p sqlite logs
+          php models/schema.php
+          echo "DB ready for upload"
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -94,9 +97,7 @@ jobs:
             .git/**
             .github/**
             .gitignore
-            .env
             .env.example
-            sqlite/database.sqlite
             logs/*.log
             backups/**
             test_*.php

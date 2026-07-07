@@ -295,8 +295,10 @@ include __DIR__ . '/../components/common/head.php';
   .resume-paper { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
   @media print {
     .no-print { display: none !important; }
-    body { background: white !important; }
-    .resume-paper { box-shadow: none; border: none; max-width: 100%; margin: 0; padding: 0.5in; }
+    body { background: white !important; margin: 0; padding: 0; }
+    main { margin: 0 !important; padding: 0 !important; display: block !important; }
+    main > div { margin: 0 !important; padding: 0.5in !important; }
+    .resume-paper { box-shadow: none; border: none; max-width: 100%; margin: 0; padding: 0; }
   }
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }
@@ -316,7 +318,7 @@ include __DIR__ . '/../components/common/head.php';
         <span class="material-symbols-outlined text-sm">save</span> Save Resume
       </button>
       <button onclick="window.print()" class="flex items-center gap-2 bg-secondary-container text-on-secondary-container font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
-        <span class="material-symbols-outlined text-sm">print</span> Print PDF
+        <span class="material-symbols-outlined text-sm">download</span> Save PDF
       </button>
       <a href="?page=resumes" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md">
         <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Resumes

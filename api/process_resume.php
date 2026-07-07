@@ -284,9 +284,7 @@ try {
             ]
         ]);
         $db->prepare("UPDATE resumes SET status = 'failed', last_error = ? WHERE id = ?")->execute([$err, $resume_id]);
-        if (!$is_beta_override) {
-            $db->prepare("UPDATE users SET ai_credits = ai_credits + 1 WHERE id = ?")->execute([$user_id]);
-        }
+        $db->prepare("UPDATE users SET ai_credits = ai_credits + 1 WHERE id = ?")->execute([$user_id]);
         echo json_encode([
             'success' => false,
             'error' => $err,
@@ -301,9 +299,7 @@ try {
     $db->prepare("UPDATE resumes SET ai_content = ?, status = 'completed', last_error = NULL WHERE id = ?")
        ->execute([$ai_content, $resume_id]);
 
-    if (!$is_beta_override) {
-        $db->prepare("UPDATE users SET ai_credits = ai_credits - 1 WHERE id = ?")->execute([$user_id]);
-    }
+    $db->prepare("UPDATE users SET ai_credits = ai_credits - 1 WHERE id = ?")->execute([$user_id]);
 
     $total = round(microtime(true) - $req_start, 2);
     log_info('process_resume', '=== Generation SUCCESS ===', [

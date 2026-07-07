@@ -226,7 +226,7 @@ include __DIR__ . '/../components/common/head.php';
   @media print {
     body { background: white !important; }
     .no-print { display: none !important; }
-    .resume-paper { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; padding: 0; margin: 0; min-height: auto; }
+    .resume-paper { box-shadow: none; border: none; margin: 0; padding: 2cm; width: 100%; max-width: 100%; min-height: auto; }
   }
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }

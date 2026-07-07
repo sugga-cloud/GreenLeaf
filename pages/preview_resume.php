@@ -218,15 +218,33 @@ if ($has_ai && $ai_data) {
 
 $template = $resume['template'] ?? 'Minimalist';
 
+if (isset($_GET['standalone'])): ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= htmlspecialchars($r_name) ?> — Resume</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: white; font-family: 'Inter', 'Segoe UI', sans-serif; }
+.resume-paper { max-width: 8.5in; margin: 0 auto; padding: 0.75in 0.5in; }
+@media print { @page { margin: 0; } body { margin: 0; padding: 0; } }
+</style>
+</head>
+<body>
+<div class="resume-paper">
+<?php else:
 include __DIR__ . '/../components/common/head.php';
 ?>
 <title>Preview Resume — GreenLeaf Resume</title>
 <style>
   .resume-paper { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
   @media print {
-    body { background: white !important; }
     .no-print { display: none !important; }
-    .resume-paper { box-shadow: none; border: none; margin: 0; padding: 2cm; width: 100%; max-width: 100%; min-height: auto; }
+    .resume-paper { box-shadow: none; border: none; }
   }
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }
@@ -235,9 +253,7 @@ include __DIR__ . '/../components/common/head.php';
 <body class="bg-background font-body-md text-on-background min-h-screen">
 <?php include __DIR__ . '/../components/common/announcement_banner.php'; ?>
 <?php include __DIR__ . '/../components/user_dashboard/sidebar.php'; ?>
-
 <main class="md:ml-64 flex flex-col min-h-screen">
-  
   <header class="fixed top-0 right-0 left-0 md:left-64 z-30 bg-surface/80 backdrop-blur-md shadow-sm flex justify-between items-center px-6 md:px-16 py-4 no-print">
     <div class="flex items-center gap-2 font-headline-md text-headline-md font-bold text-primary">
       <span class="material-symbols-outlined">energy_savings_leaf</span>
@@ -255,17 +271,13 @@ include __DIR__ . '/../components/common/head.php';
       </a>
     </div>
   </header>
-
   <div class="mt-24 px-6 md:px-16 pb-16 flex-1 flex flex-col items-center">
-    
     <?php if (isset($_GET['template_switched'])): ?>
         <div class="w-full max-w-4xl mb-6 p-4 bg-primary-container text-on-primary-container rounded-xl flex items-center gap-2 animate-fade-in shadow border border-primary/10 no-print">
           <span class="material-symbols-outlined text-sm">palette</span>
           <span class="font-label-md text-xs font-bold">Resume template updated successfully!</span>
         </div>
     <?php endif; ?>
-
-    <!-- Top toolbar -->
     <div class="w-full max-w-4xl bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 no-print">
       <div>
         <h2 class="font-headline-md text-lg text-on-surface font-bold">Resume Preview: <?= htmlspecialchars($resume['job_profile']) ?></h2>
@@ -285,6 +297,7 @@ include __DIR__ . '/../components/common/head.php';
         </a>
       </div>
     </div>
+<?php endif; ?>
 
     <!-- ═══════════════════════════════════════════════════════ -->
     <!-- TEMPLATE: MINIMALIST                                   -->
@@ -784,7 +797,7 @@ function saveResume() {
 
   document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('print') === '1') setTimeout(() => window.print(), 500);
+    if (urlParams.get('standalone') === '1') setTimeout(() => window.print(), 500);
     if (urlParams.get('ai') === '1') setTimeout(() => openAIChat(), 300);
   });
 
@@ -1069,5 +1082,11 @@ function saveResume() {
     if (target) { target.classList.remove('invisible'); target.classList.add('visible'); }
   }
 </script>
+<?php if (isset($_GET['standalone'])): ?>
+</div>
+<script>(function(){ window.onload = function() { setTimeout(function() { window.print(); window.onafterprint = function(){ window.close(); }; }, 300); }; })();</script>
+<?php else: ?>
+</main>
+<?php endif; ?>
 </body>
 </html>

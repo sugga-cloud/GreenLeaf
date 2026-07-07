@@ -1,5 +1,5 @@
 <!-- SideNavBar Shell -->
-<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low flex flex-col p-4 gap-2 shadow-md z-40 hidden md:flex overflow-y-auto">
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container-low flex flex-col p-4 gap-2 shadow-md z-40 hidden md:flex overflow-y-auto no-print">
 <div class="mb-4 px-2 shrink-0">
 <h1 class="font-headline-md text-headline-md font-bold text-primary">User Dashboard</h1>
 <p class="text-on-surface-variant font-label-sm">Career Hub</p>

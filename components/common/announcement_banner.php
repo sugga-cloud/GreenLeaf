@@ -9,7 +9,7 @@ $banner_color = $db->query("SELECT value FROM settings WHERE key = 'banner_color
 $banner_link = $db->query("SELECT value FROM settings WHERE key = 'banner_link'")->fetchColumn();
 if (empty($banner_text)) return;
 ?>
-<div id="announcement-banner" class="hidden w-full py-2.5 px-4 text-center relative text-white text-sm font-medium" style="background-color: <?= htmlspecialchars($banner_color) ?>;">
+<div id="announcement-banner" class="hidden w-full py-2.5 px-4 text-center relative text-white text-sm font-medium no-print" style="background-color: <?= htmlspecialchars($banner_color) ?>;">
     <?php if ($banner_link): ?>
         <a href="<?= htmlspecialchars($banner_link) ?>" class="hover:underline"><?= htmlspecialchars($banner_text) ?></a>
     <?php else: ?>

@@ -202,9 +202,9 @@ $smtp_encryption = $db->query("SELECT value FROM settings WHERE key = 'smtp_encr
                   <label class="font-label-md text-on-surface-variant font-bold text-xs">Primary Currency Tag</label>
                   <select name="currency" class="w-full px-4 py-3 bg-surface border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all text-sm font-semibold">
                       <option value="USD" <?= $current_currency === 'USD' ? 'selected' : '' ?>>USD ($)</option>
-                      <option value="EUR" <?= $current_currency === 'EUR' ? 'selected' : '' ?>>EUR (â‚¬)</option>
-                      <option value="GBP" <?= $current_currency === 'GBP' ? 'selected' : '' ?>>GBP (Â£)</option>
-                      <option value="INR" <?= $current_currency === 'INR' ? 'selected' : '' ?>>INR (â‚¹)</option>
+<option value="EUR" <?= $current_currency === 'EUR' ? 'selected' : '' ?>>EUR (&euro;)</option>
+<option value="GBP" <?= $current_currency === 'GBP' ? 'selected' : '' ?>>GBP (&pound;)</option>
+<option value="INR" <?= $current_currency === 'INR' ? 'selected' : '' ?>>INR (&#8377;)</option>
                       <option value="CAD" <?= $current_currency === 'CAD' ? 'selected' : '' ?>>CAD (C$)</option>
                       <option value="AUD" <?= $current_currency === 'AUD' ? 'selected' : '' ?>>AUD (A$)</option>
                   </select>

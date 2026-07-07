@@ -23,7 +23,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'toggle_autopay') {
 $curr_stmt = $db->prepare("SELECT value FROM settings WHERE key = 'platform_currency'");
 $curr_stmt->execute();
 $currency_code = $curr_stmt->fetchColumn() ?: 'USD';
-$currencies = ['USD' => '$', 'EUR' => '€', 'GBP' => '£', 'INR' => '₹', 'CAD' => 'C$', 'AUD' => 'A$'];
+$currencies = ['USD' => '&#36;', 'EUR' => '&euro;', 'GBP' => '&pound;', 'INR' => '&#8377;', 'CAD' => 'C&#36;', 'AUD' => 'A&#36;'];
 $currency_symbol = $currencies[$currency_code] ?? '$';
 
 // Fetch all plans with their templates

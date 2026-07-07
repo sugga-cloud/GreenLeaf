@@ -6,7 +6,7 @@ $curr_stmt = $db->prepare("SELECT value FROM settings WHERE key = 'platform_curr
 $curr_stmt->execute();
 $currency_code = $curr_stmt->fetchColumn() ?: 'USD';
 
-$currencies = ['USD' => '$', 'EUR' => 'â‚¬', 'GBP' => 'Â£', 'INR' => 'â‚¹', 'CAD' => 'C$', 'AUD' => 'A$'];
+$currencies = ['USD' => '&#36;', 'EUR' => '&euro;', 'GBP' => '&pound;', 'INR' => '&#8377;', 'CAD' => 'C&#36;', 'AUD' => 'A&#36;'];
 $currency_symbol = $currencies[$currency_code] ?? '$';
 
 // Helper function to check if a plan is actively bought / has subscribers

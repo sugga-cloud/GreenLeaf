@@ -1,0 +1,48 @@
+name: Weekly Database Backup
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download database from server
+        run: |
+          curl -s -o database.sqlite \
+            "ftp://${{ secrets.FTP_HOST }}/${{ secrets.FTP_PATH }}sqlite/database.sqlite" \
+            --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}"
+          echo "Downloaded $(wc -c < database.sqlite) bytes"
+
+      - name: Create timestamped backup
+        run: |
+          ts=$(date +%Y-%m-%d)
+          mkdir -p backups
+          cp database.sqlite "backups/db_${ts}.sqlite"
+          gzip "backups/db_${ts}.sqlite"
+          echo "Backup size: $(wc -c < backups/db_${ts}.sqlite.gz) bytes"
+
+      - name: Upload backup to server
+        run: |
+          ts=$(date +%Y-%m-%d)
+          curl -s -T "backups/db_${ts}.sqlite.gz" \
+            "ftp://${{ secrets.FTP_HOST }}/${{ secrets.FTP_PATH }}backups/" \
+            --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" \
+            && echo "Uploaded db_${ts}.sqlite.gz" \
+            || (echo "Creating backups directory and retrying..." \
+              && curl -s -Q "-MKDIR ${{ secrets.FTP_PATH }}backups" \
+                "ftp://${{ secrets.FTP_HOST }}" \
+                --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" 2>/dev/null || true \
+              && curl -s -T "backups/db_${ts}.sqlite.gz" \
+                "ftp://${{ secrets.FTP_HOST }}/${{ secrets.FTP_PATH }}backups/" \
+                --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" \
+                && echo "Uploaded db_${ts}.sqlite.gz")
+
+      - name: Upload backup artifact to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup
+          path: backups/
+          retention-days: 7

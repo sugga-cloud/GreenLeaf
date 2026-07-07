@@ -245,7 +245,7 @@ include __DIR__ . '/../components/common/head.php';
                 <label class="font-label-md text-on-surface-variant font-bold text-xs" for="email">Email Address</label>
                 <div class="relative">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">mail</span>
-                    <input id="email" type="email" name="email" class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline/50 font-semibold text-xs" placeholder="student@greenleaf.com or admin@greenleaf.com" required>
+                    <input id="email" type="email" name="email" class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-outline/50 font-semibold text-xs" placeholder="your@email.com" required>
                 </div>
             </div>
 
@@ -302,68 +302,6 @@ include __DIR__ . '/../components/common/head.php';
             </a>
         </p>
 
-        <!-- Dev Login Panel (only in beta/dev mode) -->
-        <?php
-        $devEnabled = $db->query("SELECT value FROM settings WHERE key = 'dev_login_enabled'")->fetchColumn();
-        if ($devEnabled): ?>
-        <?php
-        $allUsers = $db->query("SELECT id, email, first_name, last_name FROM users ORDER BY id ASC")->fetchAll(PDO::FETCH_ASSOC);
-        ?>
-        <div class="mt-6">
-          <button id="dev-toggle" onclick="document.getElementById('dev-dropdown').classList.toggle('hidden'); this.classList.toggle('bg-tertiary-container')" class="w-full flex items-center justify-center gap-2 py-2.5 bg-tertiary-container text-on-tertiary-container border border-tertiary/20 rounded-xl hover:bg-tertiary/20 transition-all font-label-md text-xs font-bold">
-            <span class="material-symbols-outlined text-sm">terminal</span> Dev Login
-          </button>
-          <div id="dev-dropdown" class="hidden mt-3 bg-surface-container-lowest border border-outline-variant/50 rounded-2xl overflow-hidden shadow-lg transition-all">
-            <div class="p-3 border-b border-outline-variant/30 bg-surface-container-low">
-              <span class="font-label-md text-on-surface text-[11px] font-bold flex items-center gap-1">
-                <span class="material-symbols-outlined" style="font-size:14px">shield_person</span> Admin
-              </span>
-            </div>
-            <form method="POST" class="border-b border-outline-variant/30">
-              <input type="hidden" name="action" value="login">
-              <input type="hidden" name="email" value="admin@greenleaf.com">
-              <input type="hidden" name="password" value="devmode_bypass">
-              <button type="submit" class="w-full px-4 py-3 text-left hover:bg-primary-container/30 transition-colors flex items-center gap-3 group">
-                <div class="w-8 h-8 rounded-full bg-error text-on-error flex items-center justify-center text-xs font-bold shadow-sm group-hover:scale-110 transition-transform">AD</div>
-                <div class="flex flex-col">
-                  <span class="font-label-md text-on-surface text-xs font-bold">admin@greenleaf.com</span>
-                  <span class="text-[10px] text-on-surface-variant font-medium">Administrator</span>
-                </div>
-              </button>
-            </form>
-            <div class="p-3 border-b border-outline-variant/30 bg-surface-container-low">
-              <span class="font-label-md text-on-surface text-[11px] font-bold flex items-center gap-1">
-                <span class="material-symbols-outlined" style="font-size:14px">school</span> Students
-              </span>
-            </div>
-            <?php foreach ($allUsers as $u): ?>
-            <form method="POST" class="border-b border-outline-variant/20 last:border-b-0">
-              <input type="hidden" name="action" value="login">
-              <input type="hidden" name="email" value="<?= htmlspecialchars($u['email']) ?>">
-              <input type="hidden" name="password" value="devmode_bypass">
-              <button type="submit" class="w-full px-4 py-3 text-left hover:bg-primary-container/30 transition-colors flex items-center gap-3 group">
-                <div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center text-xs font-bold shadow-sm group-hover:scale-110 transition-transform">
-                  <?= strtoupper(substr($u['first_name'] ?? 'U', 0, 1)) ?>
-                </div>
-                <div class="flex flex-col">
-                  <span class="font-label-md text-on-surface text-xs font-bold"><?= htmlspecialchars($u['email']) ?></span>
-                  <span class="text-[10px] text-on-surface-variant font-medium"><?= htmlspecialchars(($u['first_name'] ?? '').' '.($u['last_name'] ?? '')) ?> · ID <?= $u['id'] ?></span>
-                </div>
-              </button>
-            </form>
-            <?php endforeach; ?>
-          </div>
-        </div>
-        <?php endif; ?>
-
-        <!-- Credentials Helper Notice Card -->
-        <div class="mt-4 p-4 bg-surface-container-lowest border border-dashed border-outline-variant/50 rounded-2xl flex flex-col gap-1.5 text-xs text-left">
-          <span class="font-bold text-primary flex items-center gap-1"><span class="material-symbols-outlined text-sm">school</span> Demo Credentials System:</span>
-          <div class="flex flex-col gap-1 text-[11px] text-on-surface-variant font-medium">
-            <div>🔑 <span class="font-bold text-on-surface">Admin User:</span> <code class="bg-surface px-1 py-0.5 rounded font-mono">admin@greenleaf.com</code> / <code class="bg-surface px-1 py-0.5 rounded font-mono">admin123</code></div>
-            <div>🔑 <span class="font-bold text-on-surface">Student User:</span> <code class="bg-surface px-1 py-0.5 rounded font-mono">student@greenleaf.com</code> / <code class="bg-surface px-1 py-0.5 rounded font-mono">student123</code></div>
-          </div>
-        </div>
 
     </div>
 </div>

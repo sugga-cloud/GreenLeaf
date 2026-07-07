@@ -302,6 +302,17 @@ class Schema {
             if ($pro) foreach ($paid as $tid) $ins_pt->execute([$pro['id'], $tid]);
             if ($elite) foreach ($paid as $tid) $ins_pt->execute([$elite['id'], $tid]);
         }
+        // 17. Feedbacks Table
+        $db->exec("CREATE TABLE IF NOT EXISTS feedbacks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            message TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+
+        // Feedback setting
+        try { $db->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('feedback_enabled', '0')"); } catch (Exception $e) {}
+
     public static function close() {
         self::$dbInstance = null;
     }

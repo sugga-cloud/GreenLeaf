@@ -33,6 +33,7 @@ $user_plan = $plan_stmt->fetch() ?: [
 $resumes_stmt = $db->prepare("SELECT * FROM resumes WHERE user_id = ? ORDER BY created_at DESC");
 $resumes_stmt->execute([$user_id]);
 $resumes = $resumes_stmt->fetchAll(PDO::FETCH_ASSOC);
+$feedback_enabled = $db->query("SELECT value FROM settings WHERE key = 'feedback_enabled'")->fetchColumn() ?: '0';
 include __DIR__ . '/../components/common/head.php'; 
 ?>
 <title>GreenLeaf Resume - User Dashboard</title>
@@ -308,4 +309,5 @@ window.addEventListener('click', function(e) {
   }
 });
 </script>
+<?php include __DIR__ . '/../components/common/feedback_popup.php'; ?>
 </body></html>

@@ -142,7 +142,49 @@ function restoreUserAccess(userId) {
         }
     })
     .catch(err => {
-        console.error('Error restoring user', err);
-        alert('An error occurred.');
-    });
+function cleanupDuplicates() {
+    if (!confirm("Remove duplicate users with 0 resumes? This cannot be undone.")) return;
+
+    fetch('api/cleanup_duplicates.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=cleanup_duplicates'
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            alert(`Cleaned up ${data.deleted} duplicate(s).`);
+            if (typeof loadUsers === 'function') loadUsers();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(e => { console.error(e); alert('Error cleaning up duplicates.'); });
+}
+
+function submitFeedback() {
+    const msg = document.getElementById('feedbackText')?.value;
+    if (!msg || msg.trim().length < 3) { alert('Please enter your feedback.'); return; }
+
+    fetch('api/feedback.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'action=submit&message=' + encodeURIComponent(msg.trim())
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            localStorage.setItem('feedback_submitted', '1');
+            document.getElementById('feedbackPopup')?.classList.add('hidden');
+            alert('Thank you for your feedback!');
+        } else {
+            alert('Error: ' + (data.error || 'Failed to submit'));
+        }
+    })
+    .catch(e => console.error(e));
+}
+
+function closeFeedback() {
+    localStorage.setItem('feedback_submitted', '1');
+    document.getElementById('feedbackPopup')?.classList.add('hidden');
 }

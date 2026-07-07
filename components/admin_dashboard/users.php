@@ -4,9 +4,12 @@
 <div>
 <h2 class="font-headline-lg text-headline-lg text-on-surface">User Management</h2>
 <p class="font-body-md text-on-surface-variant">Monitor, manage, and extend user trial experiences.</p>
-</div>
-<div class="flex gap-4">
-<div class="relative">
+        </div>
+        <div class="flex gap-4">
+          <button onclick="cleanupDuplicates()" class="px-4 py-2 bg-error-container text-on-error-container rounded-lg font-label-md text-xs font-bold hover:opacity-80 transition-all flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">clean_hands</span> Clean Duplicates
+          </button>
+          <div class="relative">
 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
 <input id="userSearch" class="pl-10 pr-4 py-2 bg-surface border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none text-body-md w-64 transition-all" placeholder="Search professionals..." type="text"/>
 </div>
@@ -108,4 +111,48 @@
             <button onclick="closeUserDetailsModal()" class="px-4 py-2 border border-outline-variant rounded-xl font-label-md text-on-surface hover:bg-surface-variant transition-colors">Close</button>
         </div>
     </div>
+</div>
+
+<!-- Feedbacks Section -->
+<section class="mt-8 bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant overflow-hidden">
+<div class="p-6 border-b border-surface-variant">
+    <h3 class="font-headline-md text-headline-md text-on-surface">User Feedbacks</h3>
+</div>
+<div class="p-4 max-h-80 overflow-y-auto" id="feedbacksList">
+    <p class="text-on-surface-variant text-xs font-medium text-center py-8">Loading feedbacks...</p>
+</div>
+</section>
+
+<script>
+function loadFeedbacks() {
+    fetch('api/feedback.php?action=list')
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('feedbacksList');
+            if (!data.success || !data.data.length) {
+                el.innerHTML = '<p class="text-on-surface-variant text-xs font-medium text-center py-8">No feedbacks yet.</p>';
+                return;
+            }
+            el.innerHTML = data.data.map(f => `
+                <div class="p-3 bg-surface-container rounded-xl mb-2 flex justify-between items-start">
+                    <div>
+                        <p class="text-[10px] text-on-surface-variant font-medium">${f.email || 'Unknown'} &middot; ${new Date(f.created_at).toLocaleDateString()}</p>
+                        <p class="text-xs text-on-surface font-semibold mt-1">${f.message}</p>
+                    </div>
+                    <button onclick="deleteFeedback(${f.id})" class="text-error hover:opacity-70 text-xs font-bold shrink-0 ml-2">Delete</button>
+                </div>
+            `).join('');
+        });
+}
+function deleteFeedback(id) {
+    if (!confirm('Delete this feedback?')) return;
+    fetch('api/feedback.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'action=delete&id=' + id
+    }).then(r => r.json()).then(d => { if (d.success) loadFeedbacks(); });
+}
+document.addEventListener("DOMContentLoaded", loadFeedbacks);
+</script>
+
 </div>

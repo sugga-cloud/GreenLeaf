@@ -57,12 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dev_login = isset($_POST['dev_login_enabled']) ? '1' : '0';
         $credit_override = (int)($_POST['credit_override'] ?? 20);
         $social_login = isset($_POST['social_login_enabled']) ? '1' : '0';
+        $feedback_enabled = isset($_POST['feedback_enabled']) ? '1' : '0';
         $beta_global_credits = (int)($_POST['beta_global_credits'] ?? 50);
 
         $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('beta_mode', ?)")->execute([$beta_mode]);
         $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('dev_login_enabled', ?)")->execute([$dev_login]);
         $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('credit_override', ?)")->execute([$credit_override]);
         $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('social_login_enabled', ?)")->execute([$social_login]);
+        $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('feedback_enabled', ?)")->execute([$feedback_enabled]);
         $db->prepare("INSERT OR REPLACE INTO settings (key, value) VALUES ('beta_global_credits', ?)")->execute([$beta_global_credits]);
 
         // Save permission toggles
@@ -110,6 +112,7 @@ $beta_mode = $db->query("SELECT value FROM settings WHERE key = 'beta_mode'")->f
 $dev_login = $db->query("SELECT value FROM settings WHERE key = 'dev_login_enabled'")->fetchColumn() ?: '0';
 $credit_override = $db->query("SELECT value FROM settings WHERE key = 'credit_override'")->fetchColumn() ?: '20';
 $social_login = $db->query("SELECT value FROM settings WHERE key = 'social_login_enabled'")->fetchColumn() ?: '0';
+$feedback_enabled = $db->query("SELECT value FROM settings WHERE key = 'feedback_enabled'")->fetchColumn() ?: '0';
 $banner_enabled = $db->query("SELECT value FROM settings WHERE key = 'banner_enabled'")->fetchColumn() ?: '0';
 $banner_text = $db->query("SELECT value FROM settings WHERE key = 'banner_text'")->fetchColumn() ?: '';
 $banner_color = $db->query("SELECT value FROM settings WHERE key = 'banner_color'")->fetchColumn() ?: '#006c49';
@@ -368,6 +371,14 @@ $smtp_encryption = $db->query("SELECT value FROM settings WHERE key = 'smtp_encr
                   <div>
                       <span class="font-label-md text-on-surface text-xs font-bold">Social Login (Google)</span>
                       <p class="text-[10px] text-on-surface-variant font-medium">Enable Google OAuth sign-in on the login page</p>
+                  </div>
+              </label>
+
+              <label class="flex items-center gap-3 cursor-pointer">
+                  <input type="checkbox" name="feedback_enabled" value="1" <?= $feedback_enabled ? 'checked' : '' ?> class="w-5 h-5 rounded accent-tertiary">
+                  <div>
+                      <span class="font-label-md text-on-surface text-xs font-bold">Feedback Popup</span>
+                      <p class="text-[10px] text-on-surface-variant font-medium">Show one-time feedback popup to users on dashboard</p>
                   </div>
               </label>
 

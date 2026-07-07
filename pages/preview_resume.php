@@ -225,9 +225,61 @@ if (isset($_GET['standalone'])): ?>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($r_name) ?> — Resume</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,200&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                "primary-fixed-dim": "#4edea3",
+                "on-secondary": "#ffffff",
+                "on-surface": "#151c27",
+                "inverse-surface": "#2a313d",
+                "on-tertiary-container": "#1b3f31",
+                "secondary-fixed": "#b0f0d6",
+                "surface": "#f9f9ff",
+                "on-secondary-fixed": "#002117",
+                "outline": "#6c7a71",
+                "on-tertiary-fixed-variant": "#294e3f",
+                "surface-container-high": "#e2e8f8",
+                "on-surface-variant": "#3c4a42",
+                "surface-bright": "#f9f9ff",
+                "surface-tint": "#006c49",
+                "on-primary": "#ffffff",
+                "primary-fixed": "#6ffbbe",
+                "tertiary": "#416656",
+                "secondary-fixed-dim": "#95d3ba",
+                "secondary-container": "#adedd3",
+                "on-secondary": "#002117",
+                "on-error": "#ffffff",
+                "on-primary-fixed": "#002114",
+                "on-secondary-fixed-variant": "#1b3c2e",
+                "surface-container": "#edf3fe",
+                "on-tertiary-fixed": "#001f16",
+                "on-error-container": "#601410",
+                "tertiary-fixed": "#bef1dd",
+                "primary": "#006c49",
+                "secondary": "#3c5b4c",
+                "on-primary-container": "#002114",
+                "on-inverse-surface": "#edf3fe",
+                "error-container": "#ffdad6",
+                "surface-container-lowest": "#ffffff",
+                "on-background": "#191c20",
+                "background": "#f9f9ff",
+                "tertiary-fixed-dim": "#a3d4c1",
+                "surface-container-low": "#f3f3fb",
+                "primary-container": "#6ffbbe",
+                "on-surface-fixed": "#151c27",
+                "outline-variant": "#bfcec4",
+                "on-primary-fixed-variant": "#003824",
+                "surface-variant": "#dae5da"
+            }
+        }
+    }
+};
+</script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: white; font-family: 'Inter', 'Segoe UI', sans-serif; padding: 0.5in; }

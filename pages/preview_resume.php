@@ -227,7 +227,7 @@ include __DIR__ . '/../components/common/head.php';
     body * { visibility: hidden; }
     .resume-paper, .resume-paper * { visibility: visible; }
     .resume-paper { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; padding: 0; margin: 0; }
-    main, header, aside, .no-print { display: none !important; }
+    .no-print { display: none !important; }
   }
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }

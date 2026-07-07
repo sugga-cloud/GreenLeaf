@@ -312,6 +312,7 @@ class Schema {
 
         // Feedback setting
         try { $db->exec("INSERT OR IGNORE INTO settings (key, value) VALUES ('feedback_enabled', '0')"); } catch (Exception $e) {}
+    }
 
     public static function close() {
         self::$dbInstance = null;

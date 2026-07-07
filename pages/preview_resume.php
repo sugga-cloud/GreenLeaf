@@ -224,10 +224,10 @@ include __DIR__ . '/../components/common/head.php';
 <style>
   .resume-paper { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); }
   @media print {
-    body * { visibility: hidden; }
-    .resume-paper, .resume-paper * { visibility: visible; }
-    .resume-paper { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; padding: 0; margin: 0; }
+    body { background: white !important; }
     .no-print { display: none !important; }
+    .resume-paper { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border: none; padding: 0; margin: 0; min-height: auto; }
+    a[href]:not([href^="#"]):not([href^="?"])::after { content: " (" attr(href) ")"; font-size: 0.75em; font-weight: normal; color: #666; text-decoration: none; }
   }
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }

@@ -271,7 +271,7 @@ include __DIR__ . '/../components/common/head.php';
                       <span class="material-symbols-outlined text-xs">content_copy</span> Duplicate
                     </button>
                   </form>
-                  <a href="?page=preview_resume&id=<?= $r['id'] ?>&standalone=1" target="_blank" class="flex-1 flex items-center justify-center gap-1 border border-outline-variant/60 text-on-surface-variant hover:text-primary py-2 rounded-xl font-label-md text-center hover:bg-surface-variant transition-all active:scale-95 text-xs font-semibold bg-surface-variant/30">
+                  <a href="?page=preview_resume&id=<?= $r['id'] ?>&standalone=1" class="flex-1 flex items-center justify-center gap-1 border border-outline-variant/60 text-on-surface-variant hover:text-primary py-2 rounded-xl font-label-md text-center hover:bg-surface-variant transition-all active:scale-95 text-xs font-semibold bg-surface-variant/30">
                     <span class="material-symbols-outlined text-xs">download</span> PDF
                   </a>
                 <?php endif; ?>

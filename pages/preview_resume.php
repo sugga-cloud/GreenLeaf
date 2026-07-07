@@ -850,7 +850,7 @@ function saveResume() {
   }
 
   function downloadResume() {
-    var opt = { margin: [0.5,0.5], filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+    var opt = { margin: 0, filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
     html2pdf().set(opt).from(document.querySelector('.resume-paper')).save();
   }
 
@@ -1144,7 +1144,7 @@ function saveResume() {
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <?php if (isset($_GET['standalone'])): ?>
-<script>(function(){ window.onload = function() { setTimeout(function() { var opt = { margin: [0.5,0.5], filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }; html2pdf().set(opt).from(document.querySelector('.resume-paper')).save().then(function(){ window.close(); }); }, 500); }; })();</script>
+<script>(function(){ window.onload = function() { setTimeout(function() { var opt = { margin: 0, filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }; html2pdf().set(opt).from(document.querySelector('.resume-paper')).save().then(function(){ window.location.href = '?page=resumes'; }); }, 500); }; })();</script>
 <?php else: ?>
 </main>
 <?php endif; ?>

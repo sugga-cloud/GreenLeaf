@@ -303,7 +303,6 @@ include __DIR__ . '/../components/common/head.php';
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-LYj9nEZ5HQl2HvpX0ZY6Sqvl5pL6s/eKrHqPm4pGqCHtJ0OL3EjnXRK9XPGmQ2JzTG/fFyV6rA26QKqpDP9L/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body class="bg-background font-body-md text-on-background min-h-screen">
 <?php include __DIR__ . '/../components/common/announcement_banner.php'; ?>
@@ -318,9 +317,9 @@ include __DIR__ . '/../components/common/head.php';
       <button onclick="saveResume()" class="flex items-center gap-2 bg-primary text-on-primary font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
         <span class="material-symbols-outlined text-sm">save</span> Save Resume
       </button>
-      <button onclick="downloadPDF()" class="flex items-center gap-2 bg-secondary-container text-on-secondary-container font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
+      <a href="api/generate_pdf.php?id=<?= $resume['id'] ?>" class="flex items-center gap-2 bg-secondary-container text-on-secondary-container font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
         <span class="material-symbols-outlined text-sm">download</span> Download PDF
-      </button>
+      </a>
       <a href="?page=resumes" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md">
         <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Resumes
       </a>
@@ -751,25 +750,6 @@ function saveResume() {
   })
   .catch(() => alert("An error occurred while saving."));
 }
-
-function downloadPDF() {
-  var el = document.querySelector('.resume-paper');
-  var links = el.querySelectorAll('a[href]');
-  var linkData = [], elRect = el.getBoundingClientRect();
-  links.forEach(function(l) {
-    var r = l.getBoundingClientRect();
-    linkData.push({ x: r.left - elRect.left, y: r.top - elRect.top, w: r.width, h: r.height, href: l.getAttribute('href') });
-  });
-  var opt = { margin: 0, filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'pt', format: 'letter', orientation: 'portrait' } };
-  html2pdf().set(opt).from(el).toPdf().get('pdf').then(function(pdf) {
-    var pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
-    var sx = pw / elRect.width, sy = ph / elRect.height;
-    linkData.forEach(function(lnk) {
-      try { pdf.link(lnk.x * sx, ph - (lnk.y + lnk.h) * sy, lnk.w * sx, lnk.h * sy, { url: lnk.href }); } catch(e) {}
-    });
-    pdf.save('resume.pdf');
-  });
-}
 </script>
 
 <!-- AI MODIFY CHAT PANEL -->
@@ -1159,21 +1139,8 @@ function downloadPDF() {
 </script>
 <?php endif; ?><!-- end dashboard JS/modals -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-LYj9nEZ5HQl2HvpX0ZY6Sqvl5pL6s/eKrHqPm4pGqCHtJ0OL3EjnXRK9XPGmQ2JzTG/fFyV6rA26QKqpDP9L/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <?php if (isset($_GET['standalone'])): ?>
-<script>(function(){ window.onload = function() { setTimeout(function() {
-  var el = document.querySelector('.resume-paper');
-  var links = el.querySelectorAll('a[href]'), linkData = [], elRect = el.getBoundingClientRect();
-  links.forEach(function(l) { var r = l.getBoundingClientRect(); linkData.push({ x: r.left - elRect.left, y: r.top - elRect.top, w: r.width, h: r.height, href: l.getAttribute('href') }); });
-  var opt = { margin: 0, filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'pt', format: 'letter', orientation: 'portrait' } };
-  html2pdf().set(opt).from(el).toPdf().get('pdf').then(function(pdf) {
-    var pw = pdf.internal.pageSize.getWidth(), ph = pdf.internal.pageSize.getHeight();
-    var sx = pw / elRect.width, sy = ph / elRect.height;
-    linkData.forEach(function(lnk) { try { pdf.link(lnk.x * sx, ph - (lnk.y + lnk.h) * sy, lnk.w * sx, lnk.h * sy, { url: lnk.href }); } catch(e) {} });
-    pdf.save('resume.pdf');
-    setTimeout(function(){ window.location.href = '?page=resumes'; }, 500);
-  });
-}, 500); }; })();</script>
+<script>window.location.href = 'api/generate_pdf.php?id=<?= $resume_id ?>';</script>
 <?php else: ?>
 </main>
 <?php endif; ?>

@@ -300,6 +300,7 @@ include __DIR__ . '/../components/common/head.php';
   @keyframes spin-ai { to { transform: rotate(360deg); } }
   .ai-loading { animation: spin-ai 1s linear infinite; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body class="bg-background font-body-md text-on-background min-h-screen">
 <?php include __DIR__ . '/../components/common/announcement_banner.php'; ?>
@@ -314,8 +315,8 @@ include __DIR__ . '/../components/common/head.php';
       <button onclick="saveResume()" class="flex items-center gap-2 bg-primary text-on-primary font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
         <span class="material-symbols-outlined text-sm">save</span> Save Resume
       </button>
-      <button onclick="window.print()" class="flex items-center gap-2 bg-secondary-container text-on-secondary-container font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
-        <span class="material-symbols-outlined text-sm">print</span> Print PDF
+      <button onclick="downloadResume()" class="flex items-center gap-2 bg-secondary-container text-on-secondary-container font-label-md px-4 py-2 rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
+        <span class="material-symbols-outlined text-sm">download</span> Download PDF
       </button>
       <a href="?page=resumes" class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors font-label-md">
         <span class="material-symbols-outlined text-sm">arrow_back</span> Back to Resumes
@@ -727,8 +728,9 @@ include __DIR__ . '/../components/common/head.php';
   <?php include __DIR__ . '/../components/common/app_footer.php'; ?>
 </main>
 <?php include __DIR__ . '/../components/common/bottom_nav.php'; ?>
-<?php endif; ?>
+<?php endif; ?><!-- end dashboard wrap -->
 
+<?php if (!isset($_GET['standalone'])): ?>
 <script>
 function saveResume() {
   fetch("/api/save_resume.php", {
@@ -847,9 +849,13 @@ function saveResume() {
     recognition.start();
   }
 
+  function downloadResume() {
+    var opt = { margin: [0.5,0.5], filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+    html2pdf().set(opt).from(document.querySelector('.resume-paper')).save();
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('standalone') === '1') setTimeout(() => window.print(), 500);
     if (urlParams.get('ai') === '1') setTimeout(() => openAIChat(), 300);
   });
 
@@ -1134,8 +1140,11 @@ function saveResume() {
     if (target) { target.classList.remove('invisible'); target.classList.add('visible'); }
   }
 </script>
+<?php endif; ?><!-- end dashboard JS/modals -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <?php if (isset($_GET['standalone'])): ?>
-<script>(function(){ window.onload = function() { setTimeout(function() { window.print(); window.onafterprint = function(){ window.close(); }; }, 300); }; })();</script>
+<script>(function(){ window.onload = function() { setTimeout(function() { var opt = { margin: [0.5,0.5], filename: 'resume.pdf', html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } }; html2pdf().set(opt).from(document.querySelector('.resume-paper')).save().then(function(){ window.close(); }); }, 500); }; })();</script>
 <?php else: ?>
 </main>
 <?php endif; ?>

@@ -227,15 +227,14 @@ if (isset($_GET['standalone'])): ?>
 <title><?= htmlspecialchars($r_name) ?> — Resume</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,200&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: white; font-family: 'Inter', 'Segoe UI', sans-serif; }
-.resume-paper { max-width: 8.5in; margin: 0 auto; padding: 0.75in 0.5in; }
-@media print { @page { margin: 0; } body { margin: 0; padding: 0; } }
+body { background: white; font-family: 'Inter', 'Segoe UI', sans-serif; padding: 0.5in; }
+@media print { @page { margin: 0; } body { padding: 0; } }
 </style>
 </head>
 <body>
-<div class="resume-paper">
 <?php else:
 include __DIR__ . '/../components/common/head.php';
 ?>
@@ -671,11 +670,12 @@ include __DIR__ . '/../components/common/head.php';
     </div>
     <?php endif; ?>
 
+<?php if (!isset($_GET['standalone'])): ?>
   </div>
-
   <?php include __DIR__ . '/../components/common/app_footer.php'; ?>
 </main>
 <?php include __DIR__ . '/../components/common/bottom_nav.php'; ?>
+<?php endif; ?>
 
 <script>
 function saveResume() {
@@ -1083,7 +1083,6 @@ function saveResume() {
   }
 </script>
 <?php if (isset($_GET['standalone'])): ?>
-</div>
 <script>(function(){ window.onload = function() { setTimeout(function() { window.print(); window.onafterprint = function(){ window.close(); }; }, 300); }; })();</script>
 <?php else: ?>
 </main>

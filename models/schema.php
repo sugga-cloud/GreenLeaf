@@ -302,6 +302,8 @@ class Schema {
             if ($pro) foreach ($paid as $tid) $ins_pt->execute([$pro['id'], $tid]);
             if ($elite) foreach ($paid as $tid) $ins_pt->execute([$elite['id'], $tid]);
         }
+    public static function close() {
+        self::$dbInstance = null;
     }
 }
 ?>

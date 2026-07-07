@@ -5,7 +5,6 @@
 $target = __DIR__ . DIRECTORY_SEPARATOR . 'database.demo.sqlite';
 if (file_exists($target)) unlink($target);
 
-// Create a fresh connection directly
 $orig_path = __DIR__ . DIRECTORY_SEPARATOR . 'database.sqlite';
 $orig_exists = file_exists($orig_path);
 
@@ -16,9 +15,8 @@ if ($orig_exists) {
 
 // Run schema to create fresh DB
 require_once __DIR__ . '/../models/schema.php';
-$schema = new Schema();
-$db = $schema::getDB();
-$schema::init();
+Schema::init();
+Schema::close(); // release file lock
 
 // Copy to demo file
 copy($orig_path, $target);
@@ -28,18 +26,13 @@ echo "Copied schema to demo DB\n";
 if ($orig_exists) {
     unlink($orig_path);
     rename($orig_path . '.bak', $orig_path);
-    echo "Restored original database\n";
 } else {
     unlink($orig_path);
 }
 
-// Now seed extra demo data
+// Now seed extra demo data into the demo DB
 $demo = new PDO('sqlite:' . $target);
 $demo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-// Add extra demo users (beyond the 2 seeded by schema)
-$count = $demo->query("SELECT COUNT(*) FROM users")->fetchColumn();
-echo "Existing users: $count\n";
 
 $ins = $demo->prepare("INSERT OR IGNORE INTO users (first_name, last_name, email, phone, location, current_plan, ai_credits, trial_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 $ins->execute(['Alice', 'Johnson', 'alice@example.com', '+1-555-0101', 'New York, NY', 'Pro Career Growth', 50, 'Active']);
@@ -55,4 +48,4 @@ $demo->exec("INSERT OR IGNORE INTO profile_projects (user_id, title, description
 
 echo "\nDemo database created: database.demo.sqlite\n";
 echo "Size: " . filesize($target) . " bytes\n";
-echo "\nTo use: copy sqlite/database.demo.sqlite to sqlite/database.sqlite\n";
+echo "\nTo use: cp sqlite/database.demo.sqlite sqlite/database.sqlite\n";

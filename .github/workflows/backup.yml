@@ -12,7 +12,7 @@ jobs:
       - name: Download database from server
         run: |
           curl -s -o database.sqlite \
-            "ftp://${{ secrets.FTP_HOST }}/${{ secrets.FTP_PATH }}sqlite/database.sqlite" \
+            "ftp://${{ secrets.FTP_HOST }}${{ secrets.FTP_PATH }}sqlite/database.sqlite" \
             --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}"
           echo "Downloaded $(wc -c < database.sqlite) bytes"
 
@@ -28,7 +28,7 @@ jobs:
         run: |
           ts=$(date +%Y-%m-%d)
           curl -s -T "backups/db_${ts}.sqlite.gz" \
-            "ftp://${{ secrets.FTP_HOST }}/${{ secrets.FTP_PATH }}backups/" \
+            "ftp://${{ secrets.FTP_HOST }}${{ secrets.FTP_PATH }}backups/" \
             --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" \
             && echo "Uploaded db_${ts}.sqlite.gz" \
             || (echo "Creating backups directory and retrying..." \
@@ -36,7 +36,7 @@ jobs:
                 "ftp://${{ secrets.FTP_HOST }}" \
                 --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" 2>/dev/null || true \
               && curl -s -T "backups/db_${ts}.sqlite.gz" \
-                "ftp://${{ secrets.FTP_HOST }}/${{ secrets.FTP_PATH }}backups/" \
+                "ftp://${{ secrets.FTP_HOST }}${{ secrets.FTP_PATH }}backups/" \
                 --user "${{ secrets.FTP_USER }}:${{ secrets.FTP_PASSWORD }}" \
                 && echo "Uploaded db_${ts}.sqlite.gz")
 
